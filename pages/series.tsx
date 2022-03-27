@@ -4,7 +4,10 @@ import { Card, CustomButton, CustomModal, Navbar } from "components";
 import type { NextPage } from "next";
 import { useEffect, useRef, useState } from "react";
 import { MovieProps } from "types";
-import { QUERY_GET_ALL_MOVIES_THUMBNAILS } from "utils";
+import {
+  QUERY_GET_ALL_MOVIES_THUMBNAILS,
+  QUERY_GET_SPECIFIC_MOVIES_THUMBNAILS,
+} from "utils";
 
 const Home: NextPage = () => {
   const [offset, setOffset] = useState(20);
@@ -13,10 +16,11 @@ const Home: NextPage = () => {
     data: responseData,
     loading,
     fetchMore,
-  } = useQuery(QUERY_GET_ALL_MOVIES_THUMBNAILS, {
+  } = useQuery(QUERY_GET_SPECIFIC_MOVIES_THUMBNAILS, {
     variables: {
       offset: 0,
       limit: 10,
+      type: "series",
     },
   });
   const listData = useRef<MovieProps[]>([]);
@@ -24,7 +28,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (responseData) {
-      listData.current = responseData.getAllMovies;
+      listData.current = responseData.getSpecificMovies;
       setForceUpdate((prevState) => !prevState);
     }
   }, [responseData]);
@@ -33,9 +37,8 @@ const Home: NextPage = () => {
     <div>
       <Navbar />
 
-      <main className=" relative">
-        <div className="bg-gradient-to-r from-cyan-500 to-blue-500 animate-hue-rotate w-full h-full absolute -z-10" />
-        <h1 className=" pt-4 text-center">Movies and Series</h1>
+      <main>
+        <h1>Movies</h1>
         <div className="flex flex-wrap gap-4 justify-center">
           {!loading ? (
             listData.current.map((movie, index) => (
@@ -54,8 +57,8 @@ const Home: NextPage = () => {
                   key={index}
                   onClick={() => setIdNumber(index)}
                   genres={movie.genres}
-                  plot={movie.plot}
                   type={movie.type}
+                  plot={movie.plot}
                   poster={movie.poster}
                   released={movie.released}
                   runtime={movie.runtime}
@@ -68,34 +71,26 @@ const Home: NextPage = () => {
           )}
         </div>
 
-        <div className="py-4">
-          <CustomButton
-            text="Fetch more"
-            isLoading={loading}
-            justifyContent="center"
-            alignItems="center"
-            display="flex"
-            width="100%"
-            minWidth="200px"
-            maxWidth="400px"
-            margin="0 auto"
-            colorScheme="blackAlpha"
-            onClick={() => {
-              fetchMore({
-                variables: {
-                  offset: offset,
-                  limit: 10,
-                },
-              }).then((fetchMoreResult) => {
-                listData.current = [
-                  ...listData.current,
-                  ...fetchMoreResult.data.getAllMovies,
-                ];
-                setOffset((prevState) => prevState + 10);
-              });
-            }}
-          />
-        </div>
+        <CustomButton
+          text="Fetch more"
+          className="!w-full"
+          colorScheme="linkedin"
+          onClick={() => {
+            fetchMore({
+              variables: {
+                offset: offset,
+                limit: 10,
+                type: "series",
+              },
+            }).then((fetchMoreResult) => {
+              listData.current = [
+                ...listData.current,
+                ...fetchMoreResult.data.getSpecificMovies,
+              ];
+              setOffset((prevState) => prevState + 10);
+            });
+          }}
+        />
       </main>
     </div>
   );
