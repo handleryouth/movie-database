@@ -17,6 +17,7 @@ const Card = ({
   return (
     <Box
       borderWidth="2px"
+      width="xl"
       borderRadius="lg"
       display="flex"
       alignItems="center"
@@ -26,7 +27,7 @@ const Card = ({
         display="flex"
         gap="0.75rem"
         className="flex-col !sm:flex-row"
-        padding="0.5rem"
+        padding="0.8rem"
         onClick={onClick}
       >
         <div className="flex items-center justify-center">

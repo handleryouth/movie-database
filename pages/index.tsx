@@ -1,8 +1,8 @@
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { CircularProgress } from "@chakra-ui/react";
 import { Card, CustomButton, CustomModal, Navbar } from "components";
 import type { NextPage } from "next";
-import { useEffect, useRef, useState } from "react";
 import { MovieProps } from "types";
 import { QUERY_GET_ALL_MOVIES_THUMBNAILS } from "utils";
 
@@ -36,7 +36,7 @@ const Home: NextPage = () => {
       <main className=" relative">
         <div className="bg-gradient-to-r from-cyan-500 to-blue-500 animate-hue-rotate w-full h-full absolute -z-10" />
         <h1 className=" pt-4 text-center">Movies and Series</h1>
-        <div className="flex flex-wrap gap-4 justify-center">
+        <div className="flex flex-wrap gap-4 justify-center px-4 max-w-[80rem] mx-auto">
           {!loading ? (
             listData.current.map((movie, index) => (
               <>

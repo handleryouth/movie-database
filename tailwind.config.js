@@ -19,7 +19,7 @@ module.exports = {
         },
       },
       animation: {
-        "hue-rotate": "hue-rotate 20s ease infinite",
+        "hue-rotate": "hue-rotate 15s ease infinite",
       },
       typography: {
         DEFAULT: {
