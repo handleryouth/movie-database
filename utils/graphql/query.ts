@@ -31,3 +31,19 @@ export const QUERY_GET_SPECIFIC_MOVIES_THUMBNAILS = gql`
     }
   }
 `;
+
+export const QUERY_GET_SPECIFIC_MOVIE_TITLE = gql`
+  query getSpecificTitleMovies($limit: Int, $offset: Int, $title: String) {
+    getSpecificMovieTitle(limit: $limit, offset: $offset, title: $title) {
+      plot
+      title
+      poster
+      type
+      directors
+      fullplot
+      released
+      genres
+      runtime
+    }
+  }
+`;

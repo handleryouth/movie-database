@@ -51,5 +51,6 @@ export const typeDefs = gql`
   type Query {
     getAllMovies(limit: Int, offset: Int, type: String): [MovieQuery!]
     getSpecificMovies(limit: Int, offset: Int, type: String): [MovieQuery!]
+    getSpecificMovieTitle(title: String, limit: Int, offset: Int): [MovieQuery!]
   }
 `;

@@ -3,7 +3,7 @@ export * from "./Card";
 export * from "./Navbar";
 export * from "./Badge";
 export * from "./Button";
-export * from "./Modals";
+export * from "./modals";
 export * from "./FilterBar";
 
 export { default as Layout } from "./Layout";

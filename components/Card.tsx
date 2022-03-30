@@ -1,8 +1,9 @@
 import { Box, Container } from "@chakra-ui/react";
 import Image from "next/image";
-import React from "react";
-import { CardProps } from "types";
+
 import CustomBadge from "./Badge";
+
+import { CardProps } from "types";
 
 const Card = ({
   poster,
@@ -17,9 +18,10 @@ const Card = ({
   return (
     <Box
       borderWidth="2px"
-      width="xl"
+      width="20rem"
       borderRadius="lg"
       display="flex"
+      height="55rem"
       alignItems="center"
       className="cursor-pointer hover:border-blue-500 transition-colors"
     >
@@ -57,7 +59,7 @@ const Card = ({
           </ul>
 
           <h4>Summary</h4>
-          <p>{plot.length > 60 ? `${plot.slice(0, 60)}...` : plot}</p>
+          <p className="h-32 overflow-auto">{plot ?? "-"}</p>
 
           <h4>Type</h4>
           <p>{type}</p>

@@ -1,8 +1,6 @@
-import { Badge, BadgeProps } from "@chakra-ui/react";
+import { Badge } from "@chakra-ui/react";
 
-export interface CustomBadgeProps extends BadgeProps {
-  text: string;
-}
+import { CustomBadgeProps } from "types";
 
 const CustomBadge = ({ text, colorScheme }: CustomBadgeProps) => {
   return <Badge colorScheme={colorScheme}>{text}</Badge>;

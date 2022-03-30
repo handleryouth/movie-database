@@ -1,9 +1,4 @@
-import React, { ReactNode } from "react";
-
-interface ModalSectionProps {
-  title: string;
-  value: string | ReactNode;
-}
+import { ModalSectionProps } from "types";
 
 const ModalSection = ({ title, value }: ModalSectionProps) => {
   return (

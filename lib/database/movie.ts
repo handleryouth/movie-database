@@ -1,4 +1,5 @@
 import { model, models, Schema, Types } from "mongoose";
+
 import { AwardProps, IMBDProps, MovieProps, TomatoesProps } from "types";
 
 export const tomatoesSchema = new Schema<TomatoesProps>({

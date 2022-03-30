@@ -19,5 +19,21 @@ export const resolvers = {
         .skip(parseInt(offset));
       return movies;
     },
+    getSpecificMovieTitle: async (
+      _parents: any,
+      { title, limit, offset }: any
+    ) => {
+      await dbConnect();
+      const movies = await movieSchema
+        .find({
+          title: {
+            $regex: title,
+            $options: "i",
+          },
+        })
+        .limit(parseInt(limit))
+        .skip(parseInt(offset));
+      return movies;
+    },
   },
 };

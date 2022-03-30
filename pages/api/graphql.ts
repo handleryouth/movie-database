@@ -1,13 +1,13 @@
+import { makeExecutableSchema } from "@graphql-tools/schema";
 import { ApolloServer } from "apollo-server-micro";
-import Cors from "micro-cors";
 import {
   typeDefs as scalarTypeDefs,
   resolvers as scalarResolvers,
 } from "graphql-scalars";
+import Cors from "micro-cors";
 
 import { resolvers } from "./resolvers";
 import { typeDefs } from "./schemas";
-import { makeExecutableSchema } from "@graphql-tools/schema";
 
 export const config = {
   api: {

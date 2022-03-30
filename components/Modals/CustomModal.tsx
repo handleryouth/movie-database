@@ -7,17 +7,10 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import Image from "next/image";
+
 import ModalSection from "./ModalSection";
 
-export interface CustomModalProps {
-  title: string;
-  body: string;
-  image: string;
-  released: Date;
-  directors: string[];
-  modalState: boolean;
-  onCloseFunction: () => void;
-}
+import { CustomModalProps } from "types";
 
 const CustomModal = ({
   title,
@@ -32,7 +25,9 @@ const CustomModal = ({
     <Modal isOpen={modalState} onClose={onCloseFunction}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{title}</ModalHeader>
+        <ModalHeader textAlign="center" fontSize="1.5rem" className="prose">
+          {title}
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody className="prose">
           {image ? (

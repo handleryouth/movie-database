@@ -1,8 +1,10 @@
+import { useEffect, useRef, useState } from "react";
+
 import { useQuery } from "@apollo/client";
 import { CircularProgress } from "@chakra-ui/react";
-import { Card, CustomButton, CustomModal, Navbar } from "components";
 import type { NextPage } from "next";
-import { useEffect, useRef, useState } from "react";
+
+import { Card, CustomButton, CustomModal, Navbar } from "components";
 import { MovieProps } from "types";
 import {
   QUERY_GET_ALL_MOVIES_THUMBNAILS,
