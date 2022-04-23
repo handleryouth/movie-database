@@ -24,11 +24,5 @@
       }
     ]
   },
-  "ignorePatterns": [
-    "next.config.js",
-    "node_modules/",
-    "public/",
-    "build/",
-    "static/"
-  ]
+  "ignorePatterns": ["next.config.js", "node_modules/"]
 }
