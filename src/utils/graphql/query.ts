@@ -3,6 +3,7 @@ import { gql } from '@apollo/client'
 export const QUERY_GET_ALL_MOVIES_THUMBNAILS = gql`
   query getAllMovies($input: PaginationInput) {
     getAllMovies(input: $input) {
+      _id
       plot
       title
       poster

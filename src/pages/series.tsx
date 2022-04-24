@@ -1,52 +1,92 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState, useCallback } from 'react'
 
-import { useQuery } from '@apollo/client'
+import { useLazyQuery, useQuery } from '@apollo/client'
 import { CircularProgress } from '@chakra-ui/react'
 import type { NextPage } from 'next'
 
-import { Card, CustomButton, CustomModal, Navbar } from 'components'
+import { Card, CustomButton, CustomModal } from 'components'
 import { MovieProps } from 'types'
 import {
   QUERY_GET_ALL_MOVIES_THUMBNAILS,
-  QUERY_GET_SPECIFIC_MOVIES_THUMBNAILS,
+  QUERY_GET_SPECIFIC_MOVIE_TITLE,
 } from 'utils'
 
 const Home: NextPage = () => {
-  const [offset, setOffset] = useState(20)
+  const [offset, setOffset] = useState(10)
+  const [searchOffset, setSearchOffset] = useState(10)
+  const searchValue = useRef('')
   const [idNumber, setIdNumber] = useState<number>()
+
   const {
     data: responseData,
     loading,
     fetchMore,
-  } = useQuery(QUERY_GET_SPECIFIC_MOVIES_THUMBNAILS, {
+  } = useQuery(QUERY_GET_ALL_MOVIES_THUMBNAILS, {
     variables: {
-      offset: 0,
-      limit: 10,
-      type: 'series',
+      input: {
+        offset: 0,
+        limit: 10,
+        type: 'series',
+      },
     },
   })
-  const listData = useRef<MovieProps[]>([])
-  const [, setForceUpdate] = useState(false)
 
-  useEffect(() => {
-    if (responseData) {
-      listData.current = responseData.getSpecificMovies
-      setForceUpdate((prevState) => !prevState)
-    }
-  }, [responseData])
+  const [
+    handleSearchData,
+    { loading: searchLoading, data: searchResult, fetchMore: fetchMoreResult },
+  ] = useLazyQuery(QUERY_GET_SPECIFIC_MOVIE_TITLE, {
+    variables: {
+      input: {
+        title: searchValue.current,
+        properties: {
+          limit: 10,
+          offset: 0,
+        },
+      },
+    },
+  })
+
+  const handlePagination = useCallback(() => {
+    fetchMore({
+      variables: {
+        input: {
+          offset: searchOffset,
+          limit: 10,
+        },
+      },
+    }).then(() => {
+      setOffset(0)
+      setSearchOffset((prevState) => prevState + 10)
+    })
+  }, [fetchMore, searchOffset])
+
+  const handleSearchPagination = useCallback(() => {
+    fetchMoreResult({
+      variables: {
+        input: {
+          title: searchValue.current,
+          properties: {
+            limit: 10,
+            offset: offset,
+          },
+        },
+      },
+    }).then(() => {
+      setSearchOffset(0)
+      setOffset((prevState) => prevState + 10)
+    })
+  }, [fetchMoreResult, offset])
 
   return (
     <div>
-      <Navbar />
-
-      <main>
-        <h1>Movies</h1>
+      <main className="bg-gradient-to-r from-cyan-500 to-blue-500 animate-hue-rotate  ">
+        <h1 className="text-center py-4">Series</h1>
         <div className="flex flex-wrap gap-4 justify-center">
           {!loading ? (
-            listData.current.map((movie, index) => (
+            (responseData.getAllMovies as MovieProps[]).map((movie, index) => (
               <>
                 <CustomModal
-                  key={index}
+                  key={movie._id.toString()}
                   title={movie.title}
                   directors={movie.directors}
                   body={movie.fullplot}
@@ -75,23 +115,17 @@ const Home: NextPage = () => {
 
         <CustomButton
           text="Fetch more"
-          className="!w-full"
-          colorScheme="linkedin"
-          onClick={() => {
-            fetchMore({
-              variables: {
-                offset: offset,
-                limit: 10,
-                type: 'series',
-              },
-            }).then((fetchMoreResult) => {
-              listData.current = [
-                ...listData.current,
-                ...fetchMoreResult.data.getSpecificMovies,
-              ]
-              setOffset((prevState) => prevState + 10)
-            })
-          }}
+          justifyContent="center"
+          alignItems="center"
+          display="flex"
+          width="100%"
+          minWidth="200px"
+          maxWidth="400px"
+          margin="0 auto"
+          colorScheme="blackAlpha"
+          onClick={() =>
+            searchValue.current ? handleSearchPagination() : handlePagination()
+          }
         />
       </main>
     </div>

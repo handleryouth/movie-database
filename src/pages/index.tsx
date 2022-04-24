@@ -1,24 +1,26 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 
 import { useLazyQuery, useQuery } from '@apollo/client'
-import { CircularProgress } from '@chakra-ui/react'
+import { CircularProgress, Input } from '@chakra-ui/react'
 import type { NextPage } from 'next'
-import { useSelector } from 'react-redux'
 
 import { Card, CustomButton, CustomModal } from 'components'
 import { MovieProps } from 'types'
 import {
   QUERY_GET_ALL_MOVIES_THUMBNAILS,
   QUERY_GET_SPECIFIC_MOVIE_TITLE,
-  RootState,
+  useDebounce,
 } from 'utils'
 
 const Home: NextPage = () => {
   const [offset, setOffset] = useState(10)
   const [idNumber, setIdNumber] = useState<number>()
   const [searchOffset, setSearchOffset] = useState(10)
+  const [, setForceUpdate] = useState(false)
 
-  const search = useSelector((state: RootState) => state.search)
+  const debounce = useDebounce()
+
+  const searchValue = useRef('')
 
   const {
     data: responseData,
@@ -39,7 +41,7 @@ const Home: NextPage = () => {
   ] = useLazyQuery(QUERY_GET_SPECIFIC_MOVIE_TITLE, {
     variables: {
       input: {
-        title: search,
+        title: searchValue.current,
         properties: {
           limit: 10,
           offset: 0,
@@ -66,7 +68,7 @@ const Home: NextPage = () => {
     fetchMoreResult({
       variables: {
         input: {
-          title: search,
+          title: searchValue.current,
           properties: {
             limit: 10,
             offset: offset,
@@ -77,23 +79,40 @@ const Home: NextPage = () => {
       setSearchOffset(0)
       setOffset((prevState) => prevState + 10)
     })
-  }, [fetchMoreResult, offset, search])
+  }, [fetchMoreResult, offset])
+
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      searchValue.current = value
+
+      debounce(() => {
+        setForceUpdate((prevState) => !prevState)
+      })
+    },
+    [debounce],
+  )
 
   useEffect(() => {
-    if (search) {
+    if (searchValue.current) {
       handleSearchData()
     }
-  }, [handleSearchData, search])
+  }, [handleSearchData, searchValue.current])
 
   return (
     <main className="relative min-h-screen">
       <div className="bg-gradient-to-r from-cyan-500 to-blue-500 animate-hue-rotate w-full h-full absolute -z-10 " />
       <h1 className=" pt-4 text-center">Movies and Series</h1>
-
+      <Input
+        onChange={(e) => handleSearchChange(e.target.value)}
+        width="full"
+        bg="white"
+        size="md"
+        placeholder="Search your movie..."
+      />
       <div className="flex flex-wrap gap-4 justify-center px-4 max-w-[80rem] mx-auto ">
         {!searchLoading && !loading ? (
           (
-            (search && searchResult
+            (searchValue.current && searchResult
               ? searchResult.getSpecificMovieTitle
               : responseData.getAllMovies) as MovieProps[]
           ).map((movie, index) => (
@@ -136,7 +155,7 @@ const Home: NextPage = () => {
           margin="0 auto"
           colorScheme="blackAlpha"
           onClick={() =>
-            search ? handleSearchPagination() : handlePagination()
+            searchValue.current ? handleSearchPagination() : handlePagination()
           }
         />
       </div>

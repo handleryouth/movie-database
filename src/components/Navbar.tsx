@@ -1,13 +1,11 @@
-import { Input } from '@chakra-ui/react'
 import { Twirl as Hamburger } from 'hamburger-react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { RootState, toggleChangeState, toggleSidebar, useDebounce } from 'utils'
+import { RootState, toggleSidebar } from 'utils'
 
 const Navbar = () => {
   const sidebarState = useSelector((state: RootState) => state.sidebar)
   const dispatch = useDispatch()
-  const debounce = useDebounce()
 
   return (
     <nav className="bg-black">
@@ -17,22 +15,11 @@ const Navbar = () => {
           <p>Nothing Works Better Than A Movie.</p>
         </div>
 
-        <div className="flex flex-col  items-end w-1/2">
-          <Hamburger
-            color="white"
-            toggled={sidebarState}
-            toggle={() => dispatch(toggleSidebar())}
-          />
-          <Input
-            onChange={(e) =>
-              debounce(() => dispatch(toggleChangeState(e.target.value)))
-            }
-            width="full"
-            bg="white"
-            size="md"
-            placeholder="Search your movie..."
-          />
-        </div>
+        <Hamburger
+          color="white"
+          toggled={sidebarState}
+          toggle={() => dispatch(toggleSidebar())}
+        />
       </div>
     </nav>
   )
