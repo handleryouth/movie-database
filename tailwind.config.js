@@ -1,7 +1,11 @@
 module.exports = {
+  darkMode: 'class',
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      colors: {
+        black: '#000000',
+      },
       keyframes: {
         'hue-rotate': {
           '0%': {
@@ -21,7 +25,9 @@ module.exports = {
       typography: {
         DEFAULT: {
           css: {
-            fontFamily: 'Inter',
+            body: {
+              color: 'black',
+            },
           },
         },
       },

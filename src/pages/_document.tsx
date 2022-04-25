@@ -13,7 +13,7 @@ export default function Document() {
         <meta name="author" content="Tony David" />
         <meta
           name="keywords"
-          content="NextJS, Tailwind, React, Redux, Tony David, handleryouth"
+          content="NextJS, Tailwind, Chakra-UI, Tony David, handleryouth"
         />
         <link
           rel="apple-touch-icon"

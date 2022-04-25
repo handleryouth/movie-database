@@ -5,12 +5,16 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
+  ModalFooter,
 } from '@chakra-ui/react'
 import Image from 'next/image'
+import { useDispatch, useSelector } from 'react-redux'
 
-import ModalSection from './ModalSection'
+import MovieSection from './MovieSection'
 
+import CustomButton from 'components/Button'
 import { CustomModalProps } from 'types'
+import { addMovie, RootState } from 'utils'
 
 const CustomModal = ({
   title,
@@ -20,7 +24,10 @@ const CustomModal = ({
   image,
   directors,
   released,
+  movieData,
 }: CustomModalProps) => {
+  const dispatch = useDispatch()
+  const selectedMovie = useSelector((state: RootState) => state.movie)
   return (
     <Modal isOpen={modalState} onClose={onCloseFunction}>
       <ModalOverlay />
@@ -46,8 +53,8 @@ const CustomModal = ({
             </p>
           )}
 
-          <ModalSection title="Summary" value={body ?? '-'} />
-          <ModalSection
+          <MovieSection title="Summary" value={body ?? '-'} />
+          <MovieSection
             title="Directors"
             value={
               directors.length
@@ -59,11 +66,23 @@ const CustomModal = ({
                 : '-'
             }
           />
-          <ModalSection
+          <MovieSection
             title="Year"
             value={released ? released.toString().slice(0, 4) : '-'}
           />
         </ModalBody>
+
+        <ModalFooter>
+          <CustomButton
+            onClick={() =>
+              selectedMovie.includes(movieData)
+                ? null
+                : dispatch(addMovie(movieData))
+            }
+          >
+            {selectedMovie.includes(movieData) ? 'Added' : 'Add to list'}
+          </CustomButton>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   )

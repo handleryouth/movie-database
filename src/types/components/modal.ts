@@ -1,5 +1,7 @@
 import { ReactNode } from 'react'
 
+import { MovieProps } from 'types/movie'
+
 export interface CustomModalProps {
   title: string
   body: string
@@ -8,6 +10,7 @@ export interface CustomModalProps {
   directors: string[]
   modalState: boolean
   onCloseFunction: () => void
+  movieData: MovieProps
 }
 
 export interface ModalSectionProps {

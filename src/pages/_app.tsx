@@ -6,13 +6,13 @@ import 'styles/globals.css'
 import { Provider } from 'react-redux'
 
 import { Layout } from 'components'
-import { client, store } from 'utils'
+import { client, store, theme } from 'utils'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Provider store={store}>
       <ApolloProvider client={client}>
-        <ChakraProvider>
+        <ChakraProvider theme={theme}>
           <Layout>
             <Component {...pageProps} />
           </Layout>

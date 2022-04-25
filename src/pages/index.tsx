@@ -1,25 +1,25 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 
 import { useLazyQuery, useQuery } from '@apollo/client'
-import { CircularProgress, Input } from '@chakra-ui/react'
+import { CircularProgress, Flex, Input } from '@chakra-ui/react'
 import type { NextPage } from 'next'
+import { useSelector } from 'react-redux'
 
-import { Card, CustomButton, CustomModal } from 'components'
+import { MovieCard, CustomButton, MovieModal, Seo } from 'components'
 import { MovieProps } from 'types'
 import {
   QUERY_GET_ALL_MOVIES_THUMBNAILS,
   QUERY_GET_SPECIFIC_MOVIE_TITLE,
+  RootState,
   useDebounce,
 } from 'utils'
 
 const Home: NextPage = () => {
-  const [offset, setOffset] = useState(10)
+  const offsetNumber = useRef(0)
   const [idNumber, setIdNumber] = useState<number>()
-  const [searchOffset, setSearchOffset] = useState(10)
+  const searchOffsetNumber = useRef(0)
   const [, setForceUpdate] = useState(false)
-
   const debounce = useDebounce()
-
   const searchValue = useRef('')
 
   const {
@@ -54,15 +54,16 @@ const Home: NextPage = () => {
     fetchMore({
       variables: {
         input: {
-          offset: searchOffset,
+          offset: searchOffsetNumber.current,
           limit: 10,
         },
       },
     }).then(() => {
-      setOffset(0)
-      setSearchOffset((prevState) => prevState + 10)
+      offsetNumber.current = 0
+      searchOffsetNumber.current += 0
+      setForceUpdate((prevState) => !prevState)
     })
-  }, [fetchMore, searchOffset])
+  }, [fetchMore])
 
   const handleSearchPagination = useCallback(() => {
     fetchMoreResult({
@@ -71,15 +72,16 @@ const Home: NextPage = () => {
           title: searchValue.current,
           properties: {
             limit: 10,
-            offset: offset,
+            offset: offsetNumber.current,
           },
         },
       },
     }).then(() => {
-      setSearchOffset(0)
-      setOffset((prevState) => prevState + 10)
+      searchOffsetNumber.current = 0
+      offsetNumber.current += 10
+      setForceUpdate((prevState) => !prevState)
     })
-  }, [fetchMoreResult, offset])
+  }, [fetchMoreResult])
 
   const handleSearchChange = useCallback(
     (value: string) => {
@@ -96,20 +98,34 @@ const Home: NextPage = () => {
     if (searchValue.current) {
       handleSearchData()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleSearchData, searchValue.current])
 
   return (
-    <main className="relative min-h-screen">
+    <main>
+      <Seo />
       <div className="bg-gradient-to-r from-cyan-500 to-blue-500 animate-hue-rotate w-full h-full absolute -z-10 " />
       <h1 className=" pt-4 text-center">Movies and Series</h1>
-      <Input
-        onChange={(e) => handleSearchChange(e.target.value)}
-        width="full"
-        bg="white"
-        size="md"
-        placeholder="Search your movie..."
-      />
-      <div className="flex flex-wrap gap-4 justify-center px-4 max-w-[80rem] mx-auto ">
+      <Flex width="full" justifyContent="center" marginBottom="4rem">
+        <Input
+          onChange={(e) => handleSearchChange(e.target.value)}
+          width="full"
+          bg="white"
+          minW="280px"
+          maxW="500px"
+          size="md"
+          placeholder="Search your movies or series"
+        />
+      </Flex>
+
+      <Flex
+        flexWrap="wrap"
+        justifyContent="center"
+        gap="1rem"
+        padding="0 1rem"
+        margin="0 auto"
+        maxW="80rem"
+      >
         {!searchLoading && !loading ? (
           (
             (searchValue.current && searchResult
@@ -117,7 +133,7 @@ const Home: NextPage = () => {
               : responseData.getAllMovies) as MovieProps[]
           ).map((movie, index) => (
             <div key={index}>
-              <CustomModal
+              <MovieModal
                 title={movie.title}
                 directors={movie.directors}
                 body={movie.fullplot}
@@ -125,8 +141,9 @@ const Home: NextPage = () => {
                 modalState={idNumber === index}
                 image={movie.poster}
                 onCloseFunction={() => setIdNumber(undefined)}
+                movieData={movie}
               />
-              <Card
+              <MovieCard
                 onClick={() => setIdNumber(index)}
                 genres={movie.genres}
                 plot={movie.plot}
@@ -141,11 +158,10 @@ const Home: NextPage = () => {
         ) : (
           <CircularProgress isIndeterminate color="green.300" />
         )}
-      </div>
+      </Flex>
 
       <div className="py-4">
         <CustomButton
-          text="Fetch more"
           justifyContent="center"
           alignItems="center"
           display="flex"
@@ -157,7 +173,9 @@ const Home: NextPage = () => {
           onClick={() =>
             searchValue.current ? handleSearchPagination() : handlePagination()
           }
-        />
+        >
+          Fetch more
+        </CustomButton>
       </div>
     </main>
   )
