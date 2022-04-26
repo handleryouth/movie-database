@@ -1,9 +1,8 @@
 import { useState } from 'react'
-
-import { CircularProgress, Flex } from '@chakra-ui/react'
+import { Flex } from '@chakra-ui/react'
+import { Text } from '@chakra-ui/react'
 import type { NextPage } from 'next'
 import { useSelector } from 'react-redux'
-
 import { MovieCard, MovieModal, Seo } from 'components'
 import { RootState } from 'utils'
 
@@ -51,7 +50,7 @@ const Watchlist: NextPage = () => {
             </div>
           ))
         ) : (
-          <CircularProgress isIndeterminate color="green.300" />
+          <Text>You haven&apos;t added anything yet</Text>
         )}
       </Flex>
     </main>

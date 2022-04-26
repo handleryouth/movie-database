@@ -7,13 +7,13 @@ export const client = new ApolloClient({
       Query: {
         fields: {
           getAllMovies: {
-            keyArgs: false,
+            keyArgs: [],
             merge(existing = [], incoming) {
               return [...existing, ...incoming]
             },
           },
-          getSpecificMovieTitle: {
-            keyArgs: false,
+          getSpecificMovie: {
+            keyArgs: [],
             merge(existing = [], incoming) {
               return [...existing, ...incoming]
             },
@@ -23,4 +23,5 @@ export const client = new ApolloClient({
     },
   }),
   uri: '/api/graphql',
+  ssrMode: true,
 })

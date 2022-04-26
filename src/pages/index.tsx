@@ -1,27 +1,24 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
-
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { CircularProgress, Flex, Input } from '@chakra-ui/react'
 import type { NextPage } from 'next'
-import { useSelector } from 'react-redux'
-
 import { MovieCard, CustomButton, MovieModal, Seo } from 'components'
 import { MovieProps } from 'types'
 import {
   QUERY_GET_ALL_MOVIES_THUMBNAILS,
   QUERY_GET_SPECIFIC_MOVIE_TITLE,
-  RootState,
   useDebounce,
 } from 'utils'
 
 const Home: NextPage = () => {
-  const offsetNumber = useRef(0)
+  const offsetNumber = useRef(10)
   const [idNumber, setIdNumber] = useState<number>()
-  const searchOffsetNumber = useRef(0)
+  const searchOffset = useRef(10)
   const [, setForceUpdate] = useState(false)
   const debounce = useDebounce()
   const searchValue = useRef('')
 
+  //no cache is used to make sure that the data is always fresh and because it the query is used in another component
   const {
     data: responseData,
     loading,
@@ -33,6 +30,7 @@ const Home: NextPage = () => {
         limit: 10,
       },
     },
+    fetchPolicy: 'no-cache',
   })
 
   const [
@@ -54,16 +52,16 @@ const Home: NextPage = () => {
     fetchMore({
       variables: {
         input: {
-          offset: searchOffsetNumber.current,
+          offset: offsetNumber.current,
           limit: 10,
         },
       },
     }).then(() => {
-      offsetNumber.current = 0
-      searchOffsetNumber.current += 0
-      setForceUpdate((prevState) => !prevState)
+      offsetNumber.current += 10
+      searchOffset.current = 0
     })
-  }, [fetchMore])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchMore, offsetNumber.current])
 
   const handleSearchPagination = useCallback(() => {
     fetchMoreResult({
@@ -72,16 +70,16 @@ const Home: NextPage = () => {
           title: searchValue.current,
           properties: {
             limit: 10,
-            offset: offsetNumber.current,
+            offset: searchOffset.current,
           },
         },
       },
     }).then(() => {
-      searchOffsetNumber.current = 0
-      offsetNumber.current += 10
-      setForceUpdate((prevState) => !prevState)
+      offsetNumber.current = 0
+      searchOffset.current += 10
     })
-  }, [fetchMoreResult])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchMoreResult, searchOffset.current, searchValue.current])
 
   const handleSearchChange = useCallback(
     (value: string) => {

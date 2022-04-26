@@ -1,9 +1,7 @@
 import { useRef, useState, useCallback } from 'react'
-
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { CircularProgress } from '@chakra-ui/react'
 import type { NextPage } from 'next'
-
 import { MovieCard, CustomButton, MovieModal, Seo } from 'components'
 import { MovieProps } from 'types'
 import {
@@ -29,6 +27,7 @@ const Series: NextPage = () => {
         type: 'series',
       },
     },
+    fetchPolicy: 'no-cache',
   })
 
   const [
